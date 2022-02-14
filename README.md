@@ -1,8 +1,8 @@
 **Allows GDB also catch "Ctrl + C" shortcut when the application using sigwait.**
 
-# 1. Problems
+# 1. Problem
 
-When `gdb` is debugging a `Linux` application's process, you can use `Ctrl+C` shortcut to interrupt `gdb` to continue executing the `gdb` commands.
+When `gdb` is debugging a `Linux` application's process, you can use the `Ctrl+C` shortcut to interrupt `gdb` for interactive input of user `gdb` commands.
 
 However, if the application uses `sigwait` to handle the `SIGINT` signal, then the above operation will not work. The application being debugged intercepted the `SIGINT` signal.
 
@@ -206,6 +206,11 @@ Then, `source` the above script file in the `gdb` initialization file (`~/.gdbin
 ```
 source ~/gdb_sigwait/src/sighandler.gdb
 ```
+
+Notice! There are several constraints to using this `gdb` script:
+
+- Your `gdb` was built with `Python` extension.
+- The debugged application must have the symbol library (corresponding to the `-g` parameter of `gcc`).
 
 # 5. Notes
 

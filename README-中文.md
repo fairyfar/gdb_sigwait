@@ -2,7 +2,7 @@
 
 # 一、问题
 
-`gdb`调试`Linux`应用程序进程时，可以使用`Ctrl+C`快捷键中断`gdb`，以继续执行`gdb`命令。
+`gdb`调试`Linux`应用程序进程时，可以使用`Ctrl+C`快捷键中断`gdb`，以便交互式输入用户`gdb`命令。
 
 但是，如果应用程序使用`sigwait`来处理`SIGINT`信号，那么，以上操作将失效。被调试的应用程序拦截了`SIGINT`信号。
 
@@ -206,6 +206,11 @@ gdb_sigwait/src/sighandler.gdb
 ```
 source ~/gdb_sigwait/src/sighandler.gdb
 ```
+
+注意！使用这个`gdb`脚本有几个约束条件：
+
+- `gdb`需要支持`Python`扩展。
+- 被调试应用程序必须带有符号库（对应`gcc`的`-g`参数）。
 
 # 五、附注
 
