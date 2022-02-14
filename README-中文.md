@@ -1,12 +1,12 @@
-**Allows GDB also catch "Ctrl + C" shortcut when the application using sigwait.**
+**让 GDB 在应用程序使用 sigwait 时也能捕获“Ctrl + C”。**
 
-# 1. Problems
+# 一、问题
 
-When `gdb` is debugging a `Linux` application's process, you can use `Ctrl+C` shortcut to interrupt `gdb` to continue executing the `gdb` commands.
+`gdb`调试`Linux`应用程序进程时，可以使用`Ctrl+C`快捷键中断`gdb`，以继续执行`gdb`命令。
 
-However, if the application uses `sigwait` to handle the `SIGINT` signal, then the above operation will not work. The application being debugged intercepted the `SIGINT` signal.
+但是，如果应用程序使用`sigwait`来处理`SIGINT`信号，那么，以上操作将失效。被调试的应用程序拦截了`SIGINT`信号。
 
-Do `gdb` command `info handle SIGINT` command in `gdb`. You can see that the "Pass to program" item is "No", but `gdb` can not catch the `SIGINT` signal at all.
+在`gdb`中执行`info handle SIGINT`命令，可以看到“Pass to program”状态是“No”，但是`gdb`根本无法捕获到`SIGINT`信号。
 
 ```
 (gdb) info handle SIGINT
@@ -14,17 +14,17 @@ Signal        Stop      Print   Pass to program Description
 SIGINT        Yes       Yes     No              Interrupt
 ```
 
-# 2. Related Issues
+# 二、相关的问题讨论
 
-There are several very classic issues:
+关于这个问题，有几个非常经典的讨论帖：
 
 * [GDB: Ctrl+C doesn't interrupt process as it usually does but rather terminates the program](https://stackoverflow.com/questions/5857300/gdb-ctrlc-doesnt-interrupt-process-as-it-usually-does-but-rather-terminates-t)
 * [Bug 9425 - When using "sigwait" GDB doesn't trap SIGINT. Ctrl+C terminates program when should break gdb.](https://sourceware.org/bugzilla/show_bug.cgi?id=9425)
 * [Bug 9039 - GDB is not trapping SIGINT. Ctrl+C terminates program when should break gdb.](https://bugzilla.kernel.org/show_bug.cgi?id=9039)
 
-# 3. Test Case
+# 三、测试用例
 
-Demo code:
+代码如下：
 
 ```c
 /*
@@ -95,7 +95,7 @@ int main(int argc, char **argv)
 }
 ```
 
-Compile the code, then debug the generated application with `gdb`:
+编译并使用`gdb`调试这个应用程序：
 
 ```bash
 [yz@localhost src]$ gcc sigwait_demo.c -g -o sigwait_demo
@@ -109,17 +109,17 @@ Starting program: sigwait_demo
 (gdb) 
 ```
 
-When trying to interrupt `gdb`, it can be seen that  the debugged application exits directly. So, the debugged application intercepts the `SIGINT` signal before `gdb`.
+可以看到，当试图中断`gdb`时，直接导致了被调试应用程序退出，即，被调试应用程序在`gdb`之前拦截了`SIGINT`信号。
 
-# 4. The Solution
+# 四、解决方法
 
-## 4.1 Ideas
+## 4.1 思路
 
-Modify the application's source code. Add some debugging auxiliary code and cooperate with the `gdb` command.
+修改应用程序代码，增加调试辅助代码，并与`gdb`命令配合。
 
-## 4.2 Methods
+## 4.2 方法
 
-First, modify the source code. The changed code framework is as follows:
+首先，修改代码，变更后代码框架如下：
 
 ```c
 ……
@@ -157,7 +157,7 @@ int main(int argc, char **argv)
 }
 ```
 
-Then, re-compile it and debug as follows:
+然后，重新编译并调试，过程如下：
 
 ```bash
 [yz@localhost src]$ gcc sigwait_demo.c -g -o sigwait_demo
@@ -184,32 +184,32 @@ Breakpoint 2, gdb_breakon_sigint () at sigwait_demo.c:15
 (gdb)
 ```
 
-It can be seen that after the modification,  `Ctrl+C` will automatically enter the breakpoint (Breakpoint 2).
+可见，修改之后，按`Ctrl+C`会自动进入断点（Breakpoint 2）。
 
-There are two key `gdb` commands above:
+以上有两条起关键左右的`gdb`命令：
 
-* `set g_enable_breakon_sigint = 1`: Sets the flag variable to avoid the application from executing graceful exit logic.
-* `b gdb_breakon_sigint`: Sets a breakpoint, the purpose is to achieve the effect of interrupting `gdb`.
+* `set g_enable_breakon_sigint = 1`设置标志变量，以避免应用程序执行正常退出逻辑。
+* `b gdb_breakon_sigint`设置断点，目的是达到中断`gdb`的效果。
 
-## 4.3 Auto Scripts
+## 4.3 自动化脚本
 
-The above source code is just a demo, and the actual use is still a little troublesome. For this, we also need to work with the `gdb` script to achieve automation.
+以上代码只是一个Demo，实际使用还是有些麻烦，为此，我们还需要与`gdb`脚本配合以实现自动化。
 
-First, write a `gdb` script, the file name is `sighhandler.gdb`. The script file is in the project directory:
+首先，编写一个`gdb`脚本，文件名为`sighandler.gdb`，脚本见工程目录：
 
 ```
 gdb_sigwait/src/sighandler.gdb
 ```
 
-Then, `source` the above script file in the `gdb` initialization file (`~/.gdbinit`), for example:
+然后，在`gdb`初始化文件（`~/.gdbinit`）中`source`上述脚本，例如：
 
 ```
 source ~/gdb_sigwait/src/sighandler.gdb
 ```
 
-# 5. Notes
+# 五、附注
 
-This project uses the MIT license.
+本项目使用MIT开源协议。
 
 Scripted by FairyFar. [www.200yi.com](http://www.200yi.com)
 
