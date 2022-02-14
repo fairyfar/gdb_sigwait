@@ -58,7 +58,7 @@ end
 define _fgdb_unbreakon_sigint
   set variable $_fgdb_g_hooked_sigint = 0
   if $_fgdb_g_set_breakon_sigint
-    set variable g_enable_breakon_sigint = 0
+    ignore-errors set variable g_enable_breakon_sigint = 0
     set variable $_fgdb_g_set_breakon_sigint = 0
 
     # delete breakpoints

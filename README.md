@@ -1,4 +1,4 @@
-**Allows GDB also catch "Ctrl + C" shortcut when the application using sigwait.**
+**Allows GDB catch "Ctrl + C" even when the application is using sigwait.**
 
 # 1. Problem
 
