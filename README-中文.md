@@ -24,7 +24,7 @@ SIGINT        Yes       Yes     No              Interrupt
 
 # 三、测试用例
 
-代码如下：
+复现问题的Demo代码如下：
 
 ```c
 /*
@@ -214,7 +214,7 @@ source ~/gdb_sigwait/src/sighandler.gdb
 
 # 五、附注
 
-本项目使用MIT开源协议。
+本项目遵循MIT开源协议。
 
 Scripted by FairyFar. [www.200yi.com](http://www.200yi.com)
 

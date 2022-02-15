@@ -24,7 +24,7 @@ There are several very classic issues:
 
 # 3. Test Case
 
-Demo code:
+Demo code to reproduce the problem:
 
 ```c
 /*
@@ -115,7 +115,7 @@ When trying to interrupt `gdb`, it can be seen that  the debugged application ex
 
 ## 4.1 Ideas
 
-Modify the application's source code. Add some debugging auxiliary code and cooperate with the `gdb` command.
+Modify the application's source code slightly. Add some debugging auxiliary code and cooperate with the `gdb` commands.
 
 ## 4.2 Methods
 
@@ -157,7 +157,7 @@ int main(int argc, char **argv)
 }
 ```
 
-Then, re-compile it and debug as follows:
+Then, re-compile and debug it as follows:
 
 ```bash
 [yz@localhost src]$ gcc sigwait_demo.c -g -o sigwait_demo
@@ -193,7 +193,7 @@ There are two key `gdb` commands above:
 
 ## 4.3 Auto Scripts
 
-The above source code is just a demo, and the actual use is still a little troublesome. For this, we also need to work with the `gdb` script to achieve automation.
+The above source code is just a demo, and it's a little troublesome to actually use. For this, we also need to work with the `gdb` script to achieve automation.
 
 First, write a `gdb` script, the file name is `sighhandler.gdb`. The script file is in the project directory:
 
@@ -214,7 +214,7 @@ Notice! There are several constraints to using this `gdb` script:
 
 # 5. Notes
 
-This project uses the MIT license.
+This project is released under the MIT license.
 
 Scripted by FairyFar. [www.200yi.com](http://www.200yi.com)
 
