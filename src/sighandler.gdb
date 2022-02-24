@@ -4,22 +4,26 @@
 #################################
 
 ### Global variables
-set variable $_fgdb_g_main_bp_idx = 0
-set variable $_fgdb_g_sigint_bp_idx = 0
-set variable $_fgdb_g_hooked_sigint = 0
-set variable $_fgdb_g_set_breakon_sigint = 0
+init-if-undefined $_fgdb_g_script_inited = 0
+init-if-undefined $_fgdb_g_main_bp_idx = 0
+init-if-undefined $_fgdb_g_sigint_bp_idx = 0
+init-if-undefined $_fgdb_g_hooked_sigint = 0
+init-if-undefined $_fgdb_g_set_breakon_sigint = 0
 
 ### Initialize
 define _fgdb_init
-  set confirm off
-  py import re
+  if !$_fgdb_g_script_inited
+    set confirm off
+    py import re
+    set variable $_fgdb_g_script_inited = 1
+  end
 end
 
 ### Try to set a breakpoint on main
 define _fgdb_set_breakon_main
   set variable $hk_found_bp = 0
   py hk_info_bp = gdb.execute('info breakpoints', to_string = True)
-  py hk_found_bp = 1 if hk_info_bp.find("main") > 0 else 0
+  py hk_found_bp = 1 if re.search(r"\bmain\b", hk_info_bp, 0) else 0
   py gdb.execute('set variable $hk_found_bp = ' + str(hk_found_bp), to_string = True)
   if !$hk_found_bp
     #set breakpoint on main
@@ -35,7 +39,7 @@ define _fgdb_breakon_sigint
     set variable $_fgdb_g_hooked_sigint = 1
 
     py hk_info_func = gdb.execute('info functions gdb_breakon_sigint', to_string = True)
-    py hk_found_func = 1 if hk_info_func.find("gdb_breakon_sigint") > 0 else 0
+    py hk_found_func = 1 if re.search(r"\bgdb_breakon_sigint\b", hk_info_func, 0) else 0
     py gdb.execute('set variable $hk_found_func = ' + str(hk_found_func), to_string = True)
     if $hk_found_func
       set variable g_enable_breakon_sigint = 1
@@ -73,6 +77,12 @@ define _fgdb_unbreakon_sigint
   end
 end
 
+define _fgdb_enable_breakpoint_sigint
+  if $_fgdb_g_sigint_bp_idx > 0
+    enable breakpoints $_fgdb_g_sigint_bp_idx
+  end
+end
+
 ### hook run command
 define hook-run
   _fgdb_set_breakon_main
@@ -91,6 +101,16 @@ end
 ### hook detach command
 define hook-detach
   _fgdb_unbreakon_sigint
+end
+
+### hookpost disable command
+define hookpost-disable
+  _fgdb_enable_breakpoint_sigint
+end
+
+### hookpost disable command
+define disable hookpost-breakpoints
+  _fgdb_enable_breakpoint_sigint
 end
 
 _fgdb_init
