@@ -23,7 +23,7 @@ end
 define _fgdb_set_breakon_main
   set variable $hk_found_bp = 0
   py hk_info_bp = gdb.execute('info breakpoints', to_string = True)
-  py hk_found_bp = 1 if re.search(r"\bmain\b", hk_info_bp, 0) else 0
+  py hk_found_bp = 1 if re.search(r"[<| |\t]\bmain\b", hk_info_bp, 0) else 0
   py gdb.execute('set variable $hk_found_bp = ' + str(hk_found_bp), to_string = True)
   if !$hk_found_bp
     #set breakpoint on main
@@ -39,7 +39,7 @@ define _fgdb_breakon_sigint
     set variable $_fgdb_g_hooked_sigint = 1
 
     py hk_info_func = gdb.execute('info functions gdb_breakon_sigint', to_string = True)
-    py hk_found_func = 1 if re.search(r"\bgdb_breakon_sigint\b", hk_info_func, 0) else 0
+    py hk_found_func = 1 if re.search(r"[<| |\t]\bgdb_breakon_sigint\b", hk_info_func, 0) else 0
     py gdb.execute('set variable $hk_found_func = ' + str(hk_found_func), to_string = True)
     if $hk_found_func
       set variable g_enable_breakon_sigint = 1
@@ -47,7 +47,7 @@ define _fgdb_breakon_sigint
 
       set variable $hk_found_bp = 0
       py hk_info_bp = gdb.execute('info breakpoints', to_string = True)
-      py hk_found_bp = 1 if hk_info_bp.find("gdb_breakon_sigint") > 0 else 0
+      py hk_found_bp = 1 if re.search(r"[<| |\t]\bgdb_breakon_sigint\b", hk_info_bp, 0) else 0
       py gdb.execute('set variable $hk_found_bp = ' + str(hk_found_bp), to_string = True)
       if !$hk_found_bp
         py hk_b_sigint = gdb.execute('break gdb_breakon_sigint', to_string = True)
