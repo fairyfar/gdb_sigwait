@@ -10,6 +10,7 @@ gcc sigwait_demo.c -g -o sigwait_demo
 // flag variable for debuging
 volatile bool g_enable_breakon_sigint = false;
 // function for gdb breakpoint
+__attribute__((noinline))
 void gdb_breakon_sigint()
 {
 	printf("A chance to break on SIGINT\n");
