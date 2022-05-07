@@ -214,6 +214,12 @@ source ~/gdb_sigwait/src/sighandler.gdb
 
 # 五、附注
 
+## 5.1 其它问题
+
+函数`signalfd`与`sigwait`有类似问题，上述方法同样适用。
+
+## 5.2 开源协议
+
 本项目遵循MIT开源协议。
 
 Scripted by FairyFar. [www.200yi.com](http://www.200yi.com)

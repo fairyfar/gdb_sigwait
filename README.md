@@ -214,6 +214,12 @@ Notice! There are several constraints to using this `gdb` script:
 
 # 5. Notes
 
+## 5.1 Other Problems 
+
+The function `signalfd` has a similar problem with `sigwait`, and the above method also works.
+
+## 5.2 Open Source License
+
 This project is released under the MIT license.
 
 Scripted by FairyFar. [www.200yi.com](http://www.200yi.com)
