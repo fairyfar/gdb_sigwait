@@ -1,3 +1,5 @@
+[中文](README-中文.md) | [ENGLISH](README.md)
+
 **让 GDB 在应用程序使用 sigwait 时也能捕获“Ctrl + C”。**
 
 # 一、问题

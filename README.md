@@ -1,3 +1,5 @@
+[中文](README-中文.md) | [ENGLISH](README.md)
+
 **Allows GDB catch "Ctrl + C" even when the application is using sigwait.**
 
 # 1. Problem
